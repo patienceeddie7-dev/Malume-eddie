@@ -1,0 +1,191 @@
+{
+  "entities": {
+    "Customer": {
+      "title": "Customer",
+      "description": "Registered loan applicant or borrower profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "firebaseUid": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "fullName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "nationalId": { "type": "string" },
+        "address": { "type": "string" },
+        "occupation": { "type": "string" },
+        "monthlyIncome": { "type": "number" },
+        "monthlyExpenses": { "type": "number" },
+        "kycStatus": { "type": "string", "enum": ["Unverified", "Pending", "Verified", "Rejected"] },
+        "accountStatus": { "type": "string", "enum": ["Active", "Suspended", "Blacklisted"] },
+        "registeredAt": { "type": "string" },
+        "verifiedAt": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "fullName", "email", "kycStatus", "accountStatus"]
+    },
+    "Staff": {
+      "title": "Staff",
+      "description": "Authorized admin staff or system operator",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "firebaseUid": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["Super Admin", "Manager", "Loan Officer", "Cashier", "Auditor"] },
+        "avatarUrl": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "role"]
+    },
+    "LoanApplication": {
+      "title": "LoanApplication",
+      "description": "Customer loan application record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "amount": { "type": "number" },
+        "periodValue": { "type": "number" },
+        "periodUnit": { "type": "string", "enum": ["Months", "Weeks", "Days"] },
+        "interestType": { "type": "string" },
+        "interestRate": { "type": "number" },
+        "monthlyInstallment": { "type": "number" },
+        "totalInterest": { "type": "number" },
+        "totalPayable": { "type": "number" },
+        "purpose": { "type": "string" },
+        "signatureUrl": { "type": "string" },
+        "clientPhotoUrl": { "type": "string" },
+        "collateralName": { "type": "string" },
+        "collateralPhotoUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "Under Review", "Approved", "Rejected", "Disbursed", "Cancelled"] },
+        "submittedAt": { "type": "string" },
+        "approvedAt": { "type": "string" },
+        "approvedBy": { "type": "string" },
+        "rejectedReason": { "type": "string" }
+      },
+      "required": ["id", "customerId", "amount", "status", "submittedAt"]
+    },
+    "Loan": {
+      "title": "Loan",
+      "description": "Disbursed active or completed loan agreement",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "applicationId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "principal": { "type": "number" },
+        "balance": { "type": "number" },
+        "totalPaid": { "type": "number" },
+        "status": { "type": "string", "enum": ["Active", "Paid Off", "Overdue", "Defaulted"] },
+        "startDate": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "nextPaymentDate": { "type": "string" }
+      },
+      "required": ["id", "applicationId", "customerId", "principal", "balance", "status"]
+    },
+    "Repayment": {
+      "title": "Repayment",
+      "description": "Payment transaction record against a loan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "loanId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "transactionRef": { "type": "string" },
+        "date": { "type": "string" },
+        "recordedBy": { "type": "string" }
+      },
+      "required": ["id", "loanId", "customerId", "amount", "date"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "System or user alert message",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "recipientId": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "channel": { "type": "string" },
+        "date": { "type": "string" },
+        "read": { "type": "boolean" },
+        "type": { "type": "string" }
+      },
+      "required": ["id", "recipientId", "title", "message", "date"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "System operational audit trail entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "actorName": { "type": "string" },
+        "actorRole": { "type": "string" },
+        "action": { "type": "string" },
+        "target": { "type": "string" },
+        "details": { "type": "string" }
+      },
+      "required": ["id", "timestamp", "actorName", "action"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Global company and system configuration",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "tagline": { "type": "string" },
+        "currencySymbol": { "type": "string" },
+        "currencyCode": { "type": "string" },
+        "defaultInterestRate": { "type": "number" }
+      },
+      "required": ["companyName"]
+    }
+  },
+  "firestore": {
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Customer accounts and KYC data"
+    },
+    "/staff/{staffId}": {
+      "schema": "Staff",
+      "description": "Staff member user accounts"
+    },
+    "/loanApplications/{applicationId}": {
+      "schema": "LoanApplication",
+      "description": "Loan applications"
+    },
+    "/loans/{loanId}": {
+      "schema": "Loan",
+      "description": "Loan contracts and schedules"
+    },
+    "/repayments/{repaymentId}": {
+      "schema": "Repayment",
+      "description": "Loan repayment records"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "System and customer notifications"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Security and operation audit logs"
+    },
+    "/settings/companySettings": {
+      "schema": "Settings",
+      "description": "Global company settings"
+    }
+  }
+}

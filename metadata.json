@@ -1,0 +1,10 @@
+{
+  "name": "CashFirst Finance - Loan Management System",
+  "description": "Cloud-based loan management platform featuring a responsive customer portal, staff admin dashboard, loan & penalty calculation engines, electronic signature agreements, and payment integration.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

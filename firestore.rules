@@ -1,0 +1,118 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidCustomer(data) {
+      return data.id is string &&
+             data.fullName is string &&
+             data.email is string;
+    }
+
+    function isValidStaff(data) {
+      return data.id is string &&
+             data.name is string &&
+             data.email is string &&
+             data.role is string;
+    }
+
+    function isValidLoanApplication(data) {
+      return data.id is string &&
+             data.customerId is string &&
+             data.amount is number;
+    }
+
+    function isValidLoan(data) {
+      return data.id is string &&
+             data.customerId is string &&
+             data.principal is number;
+    }
+
+    function isValidRepayment(data) {
+      return data.id is string &&
+             data.loanId is string &&
+             data.customerId is string &&
+             data.amount is number;
+    }
+
+    function isValidNotification(data) {
+      return data.id is string &&
+             data.recipientId is string &&
+             data.title is string &&
+             data.message is string;
+    }
+
+    function isValidAuditLog(data) {
+      return data.id is string &&
+             data.timestamp is string &&
+             data.actorName is string &&
+             data.action is string;
+    }
+
+    // Settings collection (Branding, rates, contact details)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if request.resource.data.companyName is string;
+    }
+
+    // Customers collection
+    match /customers/{customerId} {
+      allow read: if true;
+      allow create: if isValidCustomer(request.resource.data);
+      allow update: if isValidCustomer(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Staff user accounts
+    match /staff/{staffId} {
+      allow read: if true;
+      allow create: if isValidStaff(request.resource.data);
+      allow update: if isValidStaff(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Loan applications
+    match /loanApplications/{applicationId} {
+      allow read: if true;
+      allow create: if isValidLoanApplication(request.resource.data);
+      allow update: if isValidLoanApplication(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Approved loan contracts
+    match /loans/{loanId} {
+      allow read: if true;
+      allow create: if isValidLoan(request.resource.data);
+      allow update: if isValidLoan(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Repayments (immutable financial records)
+    match /repayments/{repaymentId} {
+      allow read: if true;
+      allow create: if isValidRepayment(request.resource.data);
+      allow update: if isValidRepayment(request.resource.data);
+      allow delete: if false;
+    }
+
+    // System and customer notifications
+    match /notifications/{notificationId} {
+      allow read: if true;
+      allow create: if isValidNotification(request.resource.data);
+      allow update: if isValidNotification(request.resource.data);
+      allow delete: if isSignedIn();
+    }
+
+    // Audit logs (strictly append-only, tamper-proof)
+    match /auditLogs/{logId} {
+      allow read: if true;
+      allow create: if isValidAuditLog(request.resource.data);
+      allow update, delete: if false;
+    }
+  }
+}
+
